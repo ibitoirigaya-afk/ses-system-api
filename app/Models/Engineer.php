@@ -38,6 +38,11 @@ class Engineer extends Model
     return $this->hasMany(ProposalHistory::class);
 }
 
+public function workRecords()
+{
+    return $this->hasMany(WorkRecord::class);
+}
+
     public function user()
     {
         return $this->belongsTo(User::class);
