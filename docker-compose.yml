@@ -1,0 +1,36 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ses-system-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
+    depends_on:
+      - postgres
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ses_system
+      DB_USERNAME: ses_user
+      DB_PASSWORD: ses_password
+
+  postgres:
+    image: postgres:17
+    container_name: ses-system-postgres
+    environment:
+      POSTGRES_DB: ses_system
+      POSTGRES_USER: ses_user
+      POSTGRES_PASSWORD: ses_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  vendor_data:
