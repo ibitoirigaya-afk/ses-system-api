@@ -1,58 +1,196 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SES System API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SES/BP営業管理システムのバックエンドAPIです。
+Laravel API + PostgreSQL + Docker Compose で構成しています。
 
-## About Laravel
+## 使用技術
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* PHP
+* Laravel
+* PostgreSQL
+* Docker / Docker Compose
+* PHPUnit
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 主な機能
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* スキル管理API
+* 案件管理API
+* 要員管理API
+* 提案履歴管理API
+* 稼働実績管理API
+* 論理削除・復元
+* Featureテスト
 
-## Learning Laravel
+## セットアップ
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. 環境変数ファイルを作成
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cp .env.example .env
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Dockerを起動
 
-## Contributing
+```bash
+docker compose up --build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+バックグラウンドで起動する場合：
 
-## Code of Conduct
+```bash
+docker compose up -d
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. アプリケーションキーを作成
 
-## Security Vulnerabilities
+```bash
+docker compose exec app php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. マイグレーション実行
 
-## License
+```bash
+docker compose exec app php artisan migrate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 起動URL
+
+```txt
+http://127.0.0.1:8000
+```
+
+API例：
+
+```txt
+http://127.0.0.1:8000/api/skills
+```
+
+## Makefile コマンド
+
+### Docker起動
+
+```bash
+make up
+```
+
+### Docker停止
+
+```bash
+make down
+```
+
+### Dockerをビルドして起動
+
+```bash
+make build
+```
+
+### マイグレーション実行
+
+```bash
+make migrate
+```
+
+### DBを作り直してマイグレーション実行
+
+```bash
+make fresh
+```
+
+### Featureテスト実行
+
+```bash
+make test
+```
+
+### ルート一覧確認
+
+```bash
+make route
+```
+
+### Laravelのキャッシュ削除
+
+```bash
+make cache-clear
+```
+
+## API一覧
+
+### Skills
+
+```txt
+GET    /api/skills
+POST   /api/skills
+GET    /api/skills/{skill}
+PUT    /api/skills/{skill}
+DELETE /api/skills/{skill}
+```
+
+### Projects
+
+```txt
+GET    /api/projects
+POST   /api/projects
+GET    /api/projects/{project}
+PUT    /api/projects/{project}
+DELETE /api/projects/{project}
+PATCH  /api/projects/{project}/restore
+```
+
+### Engineers
+
+```txt
+GET    /api/engineers
+POST   /api/engineers
+GET    /api/engineers/{engineer}
+PUT    /api/engineers/{engineer}
+DELETE /api/engineers/{engineer}
+PATCH  /api/engineers/{engineer}/restore
+```
+
+### Proposal Histories
+
+```txt
+GET    /api/proposal-histories
+POST   /api/proposal-histories
+GET    /api/proposal-histories/{proposal_history}
+PUT    /api/proposal-histories/{proposal_history}
+DELETE /api/proposal-histories/{proposal_history}
+PATCH  /api/proposal-histories/{proposal_history}/restore
+```
+
+### Work Records
+
+```txt
+GET    /api/work-records
+POST   /api/work-records
+GET    /api/work-records/{work_record}
+PUT    /api/work-records/{work_record}
+DELETE /api/work-records/{work_record}
+PATCH  /api/work-records/{work_record}/restore
+```
+
+## テスト
+
+Featureテストを用意しています。
+
+```bash
+make test
+```
+
+テスト対象：
+
+* Skill API
+* Project API
+* Engineer API
+* Proposal History API
+* Work Record API
+
+## 関連フロントエンド
+
+React側リポジトリ：
+
+```txt
+ses-system-react
+```
