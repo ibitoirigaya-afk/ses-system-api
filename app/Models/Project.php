@@ -25,6 +25,11 @@ class Project extends Model
         return $this->belongsToMany(Skill::class);
     }
 
+    public function proposalHistories()
+{
+    return $this->hasMany(ProposalHistory::class);
+}
+
     public function user()
     {
         return $this->belongsTo(User::class);
