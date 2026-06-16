@@ -1,34 +1,46 @@
-.PHONY: install up down build shell migrate fresh seed test route cache-clear
+.PHONY: up down build restart logs ps shell db-shell migrate fresh seed test route cache-clear
 
-install:
-	composer install
+COMPOSE=docker compose
 
 up:
-	docker compose up
+	$(COMPOSE) up -d
 
 down:
-	docker compose down
+	$(COMPOSE) down
 
 build:
-	docker compose up --build
+	$(COMPOSE) up -d --build
+
+restart:
+	$(COMPOSE) down
+	$(COMPOSE) up -d
+
+logs:
+	$(COMPOSE) logs -f
+
+ps:
+	$(COMPOSE) ps
 
 shell:
-	docker compose exec app bash
+	$(COMPOSE) exec api sh
+
+db-shell:
+	$(COMPOSE) exec postgres psql -U ses_user -d ses_system
 
 migrate:
-	docker compose exec app php artisan migrate
+	$(COMPOSE) exec api php artisan migrate
 
 fresh:
-	docker compose exec app php artisan migrate:fresh
+	$(COMPOSE) exec api php artisan migrate:fresh
 
 seed:
-	docker compose exec app php artisan db:seed
+	$(COMPOSE) exec api php artisan db:seed
 
 test:
-	docker compose exec app php artisan test
+	$(COMPOSE) exec api php artisan test
 
 route:
-	docker compose exec app php artisan route:list
+	$(COMPOSE) exec api php artisan route:list --path=api
 
 cache-clear:
-	docker compose exec app php artisan optimize:clear
+	$(COMPOSE) exec api php artisan optimize:clear

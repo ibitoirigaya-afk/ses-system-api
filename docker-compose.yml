@@ -1,5 +1,5 @@
 services:
-  app:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,29 +8,41 @@ services:
       - "8000:8000"
     volumes:
       - .:/var/www/html
-      - vendor_data:/var/www/html/vendor
+      - api_vendor:/var/www/html/vendor
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=ses_system
+      - DB_USERNAME=ses_user
+      - DB_PASSWORD=ses_password
+    command: sh -c "composer install && php artisan serve --host=0.0.0.0 --port=8000"
     depends_on:
       - postgres
-    environment:
-      DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_DATABASE: ses_system
-      DB_USERNAME: ses_user
-      DB_PASSWORD: ses_password
+    networks:
+      - ses-system-api-network
 
   postgres:
     image: postgres:17
     container_name: ses-system-postgres
+    ports:
+      - "5433:5432"
     environment:
       POSTGRES_DB: ses_system
       POSTGRES_USER: ses_user
       POSTGRES_PASSWORD: ses_password
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ses-system-api-network
 
 volumes:
+  api_vendor:
   postgres_data:
-  vendor_data:
+
+networks:
+  ses-system-api-network:
+    driver: bridge
