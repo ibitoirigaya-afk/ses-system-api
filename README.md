@@ -32,6 +32,7 @@ ses-system-api
 * 案件・要員・スキル・提案履歴・稼働実績のCRUD API
 * 論理削除・復元
 * Featureテスト
+* 初期ユーザーSeeder
 
 起動URL：
 
@@ -77,6 +78,7 @@ http://localhost:5173
 * 稼働実績管理API
 * 論理削除
 * 復元
+* 初期ユーザーSeeder
 * Featureテスト
 
 ## 認証API
@@ -190,6 +192,24 @@ POST /api/logout
 企業担当：company@example.com / password
 ```
 
+初期ユーザーは `UserSeeder` で作成します。
+
+```bash
+make seed
+```
+
+または：
+
+```bash
+docker compose exec api php artisan db:seed
+```
+
+DBを作り直して初期ユーザーも入れ直す場合：
+
+```bash
+docker compose exec api php artisan migrate:fresh --seed
+```
+
 ## ロール
 
 ### admin
@@ -227,28 +247,69 @@ POST /api/logout
 cp .env.example .env
 ```
 
-### 2. Dockerを起動
+`.env.example` の主なDB設定：
 
-```bash
-docker compose up --build
+```env
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=ses_system
+DB_USERNAME=ses_user
+DB_PASSWORD=ses_password
 ```
 
-バックグラウンドで起動する場合：
+### 2. Dockerをビルドして起動
 
 ```bash
-docker compose up -d
+make build
 ```
 
-### 3. アプリケーションキーを作成
+または：
+
+```bash
+docker compose up -d --build
+```
+
+### 3. コンテナ状態確認
+
+```bash
+make ps
+```
+
+### 4. アプリケーションキーを作成
 
 ```bash
 docker compose exec api php artisan key:generate
 ```
 
-### 4. マイグレーション実行
+### 5. マイグレーション実行
+
+```bash
+make migrate
+```
+
+または：
 
 ```bash
 docker compose exec api php artisan migrate
+```
+
+### 6. 初期ユーザー作成
+
+```bash
+make seed
+```
+
+### 7. 起動確認
+
+```txt
+http://localhost:8000
+```
+
+API確認：
+
+```bash
+curl http://127.0.0.1:8000/api/skills
 ```
 
 ## Docker構成
@@ -282,6 +343,12 @@ Mac本体からPostgreSQLを見る場合：
 localhost:5433
 ```
 
+DB接続確認：
+
+```bash
+make db-shell
+```
+
 注意：
 
 ```txt
@@ -303,16 +370,40 @@ make up
 make down
 ```
 
-### Dockerをビルドして起動
+### Dockerビルド起動
 
 ```bash
 make build
+```
+
+### Docker再起動
+
+```bash
+make restart
+```
+
+### ログ確認
+
+```bash
+make logs
 ```
 
 ### コンテナ状態確認
 
 ```bash
 make ps
+```
+
+### APIコンテナに入る
+
+```bash
+make shell
+```
+
+### PostgreSQLに入る
+
+```bash
+make db-shell
 ```
 
 ### マイグレーション実行
@@ -327,13 +418,19 @@ make migrate
 make fresh
 ```
 
+### 初期データ投入
+
+```bash
+make seed
+```
+
 ### Featureテスト実行
 
 ```bash
 make test
 ```
 
-### ルート一覧確認
+### APIルート一覧確認
 
 ```bash
 make route
@@ -400,7 +497,7 @@ GET    /api/proposal-histories/{proposal_history}
 PUT    /api/proposal-histories/{proposal_history}
 PATCH  /api/proposal-histories/{proposal_history}
 DELETE /api/proposal-histories/{proposal_history}
-PATCH  /api/proposal-histories/{proposal_history}/restore
+PATCH  /api/proposal-histories/{proposalHistory}/restore
 ```
 
 ### Work Records
@@ -412,7 +509,7 @@ GET    /api/work-records/{work_record}
 PUT    /api/work-records/{work_record}
 PATCH  /api/work-records/{work_record}
 DELETE /api/work-records/{work_record}
-PATCH  /api/work-records/{work_record}/restore
+PATCH  /api/work-records/{workRecord}/restore
 ```
 
 ## 論理削除・復元
@@ -544,6 +641,7 @@ React側では以下をLaravel APIへ接続しています。
 主要CRUD API化
 PostgreSQL接続
 Docker起動
+初期ユーザーSeeder追加
 Featureテスト通過
 React側との接続確認
 ```
@@ -557,3 +655,6 @@ React側との接続確認
 * E2Eテスト追加
 * API仕様書の追加
 * READMEの更新継続
+
+```
+```
