@@ -22,3 +22,4 @@ Route::patch('work-records/{workRecord}/restore', [WorkRecordController::class, 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/me', [AuthController::class, 'me']);
 Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/register', [AuthController::class, 'register']);
