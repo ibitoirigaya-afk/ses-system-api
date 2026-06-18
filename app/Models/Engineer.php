@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Engineer extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'user_id',
+        'bp_company_id',
         'name',
         'company_name',
         'age',
@@ -20,7 +24,6 @@ class Engineer extends Model
         'desired_conditions',
         'career_summary',
         'status',
-        'deleted_at',
     ];
 
     protected $casts = [
@@ -28,20 +31,25 @@ class Engineer extends Model
         'deleted_at' => 'datetime',
     ];
 
+    public function bpCompany()
+    {
+        return $this->belongsTo(BpCompany::class);
+    }
+
     public function skills()
     {
         return $this->belongsToMany(Skill::class);
     }
 
     public function proposalHistories()
-{
-    return $this->hasMany(ProposalHistory::class);
-}
+    {
+        return $this->hasMany(ProposalHistory::class);
+    }
 
-public function workRecords()
-{
-    return $this->hasMany(WorkRecord::class);
-}
+    public function workRecords()
+    {
+        return $this->hasMany(WorkRecord::class);
+    }
 
     public function user()
     {
