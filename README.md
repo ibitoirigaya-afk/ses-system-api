@@ -80,6 +80,8 @@ http://localhost:5173
 * 復元
 * 初期ユーザーSeeder
 * Featureテスト
+* BP企業管理API
+* BP企業と要員の紐付け
 
 ## 認証API
 
@@ -512,6 +514,17 @@ DELETE /api/work-records/{work_record}
 PATCH  /api/work-records/{workRecord}/restore
 ```
 
+### BP Companies
+
+```txt
+GET    /api/bp-companies
+POST   /api/bp-companies
+GET    /api/bp-companies/{bp_company}
+PUT    /api/bp-companies/{bp_company}
+PATCH  /api/bp-companies/{bp_company}
+DELETE /api/bp-companies/{bp_company}
+PATCH  /api/bp-companies/{id}/restore
+
 ## 論理削除・復元
 
 以下の機能は論理削除と復元に対応しています。
@@ -521,6 +534,7 @@ Projects
 Engineers
 Proposal Histories
 Work Records
+BP Companies
 ```
 
 削除：
@@ -644,6 +658,9 @@ Docker起動
 初期ユーザーSeeder追加
 Featureテスト通過
 React側との接続確認
+BP企業管理API追加
+要員とBP企業の紐付け
+React側とのBP企業管理連携確認
 ```
 
 ## 今後の改善候補
